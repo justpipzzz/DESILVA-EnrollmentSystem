@@ -17,9 +17,13 @@ public class Main {
         String studName = input.next();
         s.setStudentName(studName);
 
+        input.next();
+
         System.out.print("Program: ");
         String studProgram = input.next();
         s.setProgram(studProgram);
+
+        input.next();
 
         System.out.println("\nPlease input your COURSE info below:");
         System.out.print("Course ID: ");
