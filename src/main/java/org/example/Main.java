@@ -35,6 +35,7 @@ public class Main {
         String courProgram = input.next();
         c.setProgram(courProgram);
 
+
         System.out.println("\nVERIFICATION\n");
 
         s.display();
