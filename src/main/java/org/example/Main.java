@@ -17,8 +17,29 @@ public class Main {
         String studName = input.next();
         s.setStudentName(studName);
 
-        System.out.println("Student ID: " + s.getStudentID());
-        System.out.println("Student Name: " + s.getStudentName());
+        System.out.print("Program: ");
+        String studProgram = input.next();
+        s.setProgram(studProgram);
+
+        System.out.println("\nPlease input your COURSE info below:");
+        System.out.print("Course ID: ");
+        String courID = input.next();
+        c.setCourseID(courID);
+
+        System.out.print("Course Name: ");
+        String courName = input.next();
+        c.setCourseName(courName);
+
+        input.next();
+        System.out.print("Program: ");
+        String courProgram = input.next();
+        c.setProgram(courProgram);
+
+        System.out.println("\nVERIFICATION\n");
+
+        s.display();
+        c.display();
+
 
     }
 }

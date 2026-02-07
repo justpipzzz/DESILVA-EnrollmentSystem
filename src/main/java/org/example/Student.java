@@ -1,7 +1,6 @@
 package org.example;
 
 public class Student {
-    public boolean getStudentID;
     private String studentID;
     private String studentName;
     private String program;
@@ -32,5 +31,19 @@ public class Student {
 
     public void setStudentName(String studentName){
         this.studentName = studentName;
+    }
+
+    public String getProgram(){
+        return program;
+    }
+
+    public void setProgram(String program){
+        this.program = program;
+    }
+
+    public void display(){
+        System.out.println("Student ID: " + getStudentID());
+        System.out.println("Student Name: " + getStudentName());
+        System.out.println("Program: " + getProgram());
     }
 }
