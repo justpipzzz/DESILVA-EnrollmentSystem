@@ -1,22 +1,9 @@
-# Header 1
-
-## Header 2
-
-### Header 3
+# OOP ENROLLMENT SYSTEM
 
 ---
+Author: Allestair Philip V. De Silva
 
-This is a **simple** text.
+## **Encapsulation**
 
-**bold**
-
-List
-1. First
-2. Second
-3. Third
-
-- First
-- Second
-- Third
----
+!![Screenshot 2026-02-07 153838.png](../../../resources/images/Screenshot%202026-02-07%20153838.png)
 
