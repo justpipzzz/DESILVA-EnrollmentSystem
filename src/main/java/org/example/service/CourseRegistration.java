@@ -10,7 +10,7 @@ public class CourseRegistration {
         courseList.add(course);
     }
 
-    public void displayCourse(){
+    public void displayAllCourses(){
         for (Course course : courseList){
             System.out.println("Course ID: " + course.getCourseID() + " Course Name: " + course.getCourseName() + " Program: " + course.getProgram() + "\n");
         }
