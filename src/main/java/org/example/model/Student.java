@@ -9,7 +9,9 @@ public class Student {
 
     }
 
-    public
+    public Student(int studentID){
+        this.studentID = studentID;
+    }
 
     public Student(int studentID, String studentName, String program){
         this.studentID = studentID;
@@ -18,7 +20,7 @@ public class Student {
 
     }
 
-    public String getStudentID(){
+    public int getStudentID(){
         return studentID;
     }
 

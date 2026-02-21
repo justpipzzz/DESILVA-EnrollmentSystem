@@ -12,47 +12,77 @@ public class Main {
         StudentRegistration sr = new StudentRegistration();
 
         System.out.println("Welcome User!");
-        System.out.println("Choose an option below");
-        System.out.println("[1] Save Student\n[2] Display Students\n[3] Update Student\n[4] Remove Student\n[5] Exit");
-        System.out.println("Enter your choice: ");
+        System.out.println("What will you do today?");
+        System.out.println("\n[1] See STUDENT\n[2] See COURSES");
+        System.out.print("Enter your choice: ");
         int choice = input.nextInt();
-
         switch(choice){
             case 1:
-                System.out.println("Please input your STUDENT info below:");
-                System.out.print("Student ID: ");
-                int studID = input.nextInt();
+                while(true){
+                    System.out.println("\nChoose a STUDENT option below");
+                    System.out.println("[1] Save Student\n[2] Display Students\n[3] Update Student\n[4] Remove Student\n[5] Exit");
+                    System.out.print("Enter your choice: ");
+                    int choice = input.nextInt();
 
-                System.out.print("Student Name: ");
-                String studName = input.next();
-                input.nextLine();
+                    switch(choice){
+                        case 1:
+                            System.out.println("Please input your STUDENT info below:");
+                            System.out.print("Student ID: ");
+                            int studID = input.nextInt();
 
-                System.out.print("Student Program: ");
-                String studProgram = input.nextLine();
+                            System.out.print("Student Name: ");
+                            String studName = input.next();
+                            input.nextLine();
 
-                sr.saveStudent(new Student(studID,  studName, studProgram));
+                            System.out.print("Student Program: ");
+                            String studProgram = input.nextLine();
+
+                            sr.saveStudent(new Student(studID,  studName, studProgram));
+                            break;
+                        case 2:
+                            sr.displayAllStudents();
+                            break;
+                        case 3:
+                            System.out.println("Please input your STUDENT info to be updated below:");
+                            System.out.print("Student ID: ");
+                            int studUPD = input.nextInt();
+
+                            System.out.println("Please input updated details below:");
+
+                            System.out.print("Student Name: ");
+                            studName = input.next();
+                            input.nextLine();
+
+                            System.out.print("Student Program: ");
+                            studProgram = input.nextLine();
+
+                            System.out.println("Student Update Successful!");
+                            sr.updateStudent(new Student(studUPD, studName, studProgram));
+                            break;
+                        case 4:
+                            System.out.println("Please input Student ID to be deleted:");
+                            System.out.print("Student ID: ");
+                            int studDLT = input.nextInt();
+                            System.out.println("Student Delete Successful!");
+                            sr.deleteStudent(new Student(studDLT));
+                            break;
+                        case 5:
+                            System.exit(0);
+
+                    }
+                }
                 break;
             case 2:
-                sr.displayAllStudents();
+                while(true){
+                    System.out.println("Choose a COURSE option below");
+                    System.out.println("[1] Save Course");
+                }
         }
 
-        System.out.println("Please input your STUDENT info below:");
-        System.out.print("Student ID: ");
-        String studID = input.next();
-        s.setStudentID(studID);
-
-        System.out.println("\nPlease input your COURSE info below:");
-        System.out.print("Course ID: ");
-        String courID = input.next();
-        c.setCourseID(courID);
 
 
 
 
-        System.out.println("\nVERIFICATION\n");
-
-        s.display();
-        c.display();
 
 
     }
