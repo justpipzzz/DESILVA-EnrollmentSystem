@@ -12,14 +12,14 @@ public class StudentRegistration {
 
     public void displayAllStudents() {
         for (Student s : studentList) {
-            System.out.println("\nStudentID: " + s.getStudentID() + "\nStudent Name: " + s.getStudentName() + "\nProgram: " + s.getProgram());
+            System.out.println("\nStudentID: " + s.getPersonID() + "\nStudent Name: " + s.getPersonName() + "\nProgram: " + s.getProgram());
 
         }
     }
 
     public void updateStudent(Student student){
         for (int i = 0; i < studentList.size(); i++) {
-            if (studentList.get(i).getStudentID() == student.getStudentID()) {
+            if (studentList.get(i).getPersonID() == student.getPersonID()) {
                 studentList.set(i, student);
 
                 break;
@@ -29,7 +29,7 @@ public class StudentRegistration {
 
     public void deleteStudent(Student student){
         for (int i = 0; i < studentList.size(); i++) {
-            if (studentList.get(i).getStudentID() == student.getStudentID()) {
+            if (studentList.get(i).getPersonID() == student.getPersonID()) {
                 studentList.remove(i);
 
                 break;

@@ -11,8 +11,6 @@ public class Main {
     public static void main(String[] args){
         Scanner input = new Scanner(System.in);
 
-
-
         StudentRegistration sr = new StudentRegistration();
         CourseRegistration cr = new CourseRegistration();
 
@@ -79,7 +77,6 @@ public class Main {
 
                     }
                 }
-                break;
             case 2:
                 while(true){
                     System.out.println("Choose a COURSE option below");
