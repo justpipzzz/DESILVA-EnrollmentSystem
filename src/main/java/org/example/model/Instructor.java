@@ -9,5 +9,10 @@ public class Instructor extends Person{
 
     }
 
+    @Override
+    public void mainTask(String work) {
+        System.out.println(work);
+    }
+
 
 }
