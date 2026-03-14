@@ -1,5 +1,6 @@
 package org.example;
 import org.example.model.Course;
+import org.example.model.Instructor;
 import org.example.model.Student;
 import org.example.service.CourseRegistration;
 import org.example.service.StudentRegistration;
@@ -12,6 +13,7 @@ public class Main {
 
         StudentRegistration sr = new StudentRegistration();
         CourseRegistration cr = new CourseRegistration();
+
 
         System.out.println("Welcome User!");
         System.out.println("What will you do today?");
@@ -75,7 +77,6 @@ public class Main {
 
                     }
                 }
-                break;
             case 2:
                 while(true){
                     System.out.println("Choose a COURSE option below");
