@@ -16,7 +16,6 @@ class TuitionFeePaymentTest {
     }
 
     @Test
-    @DisplayName("Calculate Tuition Fee")
     void shouldCalculateCorrectTuitionFeeWithNoDiscount() {
         //Assert
         assertEquals(5000, tuitionFeePayment.calculateTuitionFee(5,0));
@@ -24,17 +23,33 @@ class TuitionFeePaymentTest {
     }
 
     @Test
-    @DisplayName("Calculate Tuition Fee w/ Discount")
     void shouldCalculateCorrectTuitionFeeWithDiscount() {
         //Assert
         assertEquals(4500, tuitionFeePayment.calculateTuitionFee(5,0.10));
     }
 
     @Test
-    @DisplayName("Should Make Payment of 6000")
-    void shouldMakePaymentOf6000() {
+    void shouldMakePaymentOf500() {
+        tuitionFeePayment.calculateTuitionFee(5,0);
+        tuitionFeePayment.makePayment(500);
 
-        //Assert
+        assertEquals(4500, tuitionFeePayment.getBalance());
 
+    }
+
+    @Test
+    void shouldBeFullyPaid() {
+        tuitionFeePayment.calculateTuitionFee(5,0);
+        tuitionFeePayment.makePayment(5000);
+
+        assertTrue(tuitionFeePayment.isFullyPaid());
+    }
+
+    @Test
+    void shouldBeNotFullyPaid() {
+        tuitionFeePayment.calculateTuitionFee(5,0);
+        tuitionFeePayment.makePayment(6000);
+
+        assertFalse(tuitionFeePayment.isFullyPaid());
     }
 }
