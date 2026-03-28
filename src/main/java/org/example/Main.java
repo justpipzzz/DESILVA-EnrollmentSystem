@@ -12,8 +12,6 @@ public class Main {
     public static void main(String[] args){
         Scanner input = new Scanner(System.in);
 
-        StudentRegistration sr = new StudentRegistration();
-        CourseRegistration cr = new CourseRegistration();
         CampusRegistrar campusRegistrar = new CampusRegistrar(new StudentRegistration(), new CourseRegistration());
 
         System.out.println("Welcome User!");
@@ -44,10 +42,10 @@ public class Main {
                             String studProgram = input.nextLine();
 
                             System.out.println("Student Added Successfully!");
-                            sr.saveStudent(new Student(studID,  studName, studProgram));
+                            campusRegistrar.saveStudent(new Student(studID,  studName, studProgram));
                             break;
                         case 2:
-                            sr.displayAllStudents();
+                            campusRegistrar.displayAllStudents();
                             break;
                         case 3:
                             System.out.println("Please input your STUDENT info to be updated below:");
@@ -64,14 +62,14 @@ public class Main {
                             studProgram = input.nextLine();
 
                             System.out.println("Student Update Successful!");
-                            sr.updateStudent(new Student(studUPD, studName, studProgram));
+                            campusRegistrar.updateStudent(new Student(studUPD, studName, studProgram));
                             break;
                         case 4:
                             System.out.println("Please input Student ID to be deleted:");
                             System.out.print("Student ID: ");
                             int studDLT = input.nextInt();
                             System.out.println("Student Delete Successful!");
-                            sr.deleteStudent(new Student(studDLT));
+                            campusRegistrar.deleteStudent(new Student(studDLT));
                             break;
                         case 5:
                             System.exit(0);
@@ -98,10 +96,10 @@ public class Main {
                             String courseProgram = input.nextLine();
 
                             System.out.println("Course Added Successful!");
-                            cr.saveCourse(new Course(courseID, courseName, courseProgram));
+                            campusRegistrar.saveCourse(new Course(courseID, courseName, courseProgram));
                             break;
                         case 2:
-                            cr.displayAllCourses();
+                            campusRegistrar.displayAllCourses();
                             break;
                         case 3:
                             System.out.println("Please input Course ID to be updated:");
@@ -114,7 +112,7 @@ public class Main {
                             System.out.print("Course Program: ");
                             courseProgram = input.nextLine();
                             System.out.println("Course Update Successful!");
-                            cr.updateCourse(new Course(courseUPD, courseName, courseProgram));
+                            campusRegistrar.updateCourse(new Course(courseUPD, courseName, courseProgram));
                             break;
                         case 4:
                             System.out.println("Please input Course ID to be deleted:");

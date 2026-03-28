@@ -14,12 +14,12 @@ public class CampusRegistrar {
         this.COURSE_REG = COURSE_REG;
     }
 
-    public String displayAllStudents(Student student){
+    public String displayAllStudents(){
         STUDENT_REG.displayAllStudents();
         return "Displaying All Students...";
     }
 
-    public String displayAllCourses(Course course){
+    public String displayAllCourses(){
         COURSE_REG.displayAllCourses();
         return "Displaying All Courses...";
     }
@@ -46,6 +46,15 @@ public class CampusRegistrar {
 
     }
 
+    public String updateStudent(Student student){
+        STUDENT_REG.updateStudent(student);
+        return "Updating Student...";
+    }
+
+    public String updateCourse(Course course){
+        COURSE_REG.updateCourse(course);
+        return "Updating Course...";
+    }
 
 
 }
