@@ -3,19 +3,22 @@ package org.example.service;
 import org.example.model.Course;
 import java.util.ArrayList;
 
-public class CourseRegistration {
+public class CourseRegistration implements CourseReg {
     private ArrayList<Course> courseList =  new ArrayList<>();
 
+    @Override
     public void saveCourse(Course course){
         courseList.add(course);
     }
 
+    @Override
     public void displayAllCourses(){
         for (Course course : courseList){
             System.out.println("Course ID: " + course.getCourseID() + " Course Name: " + course.getCourseName() + " Program: " + course.getProgram() + "\n");
         }
     }
 
+    @Override
     public void updateCourse(Course course){
         for (int i = 0; i < courseList.size(); i++) {
             if (courseList.get(i).getCourseID() == course.getCourseID()) {
@@ -26,6 +29,7 @@ public class CourseRegistration {
         }
     }
 
+    @Override
     public void deleteCourse(Course course){
         for (int i = 0; i < courseList.size(); i++) {
             if (courseList.get(i).getCourseID() == course.getCourseID()) {
