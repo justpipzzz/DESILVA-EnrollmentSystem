@@ -1,44 +1,42 @@
 package org.example.service;
 
 import org.example.model.Student;
+import org.example.exception.DuplicateIDException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class StudentRegistration implements StudentReg {
-    private ArrayList<Student> studentList = new ArrayList<>();
+public class StudentRegistration implements IStudentService {
+    private List<Student> studentList = new ArrayList<>();
 
     @Override
-    public void saveStudent(Student student){
+    public void addStudent(Student student) throws DuplicateIDException {
+        // Check for duplicates before adding
+        for (Student s : studentList) {
+            if (s.getPersonID() == student.getPersonID()) {
+                throw new DuplicateIDException("Error: Student with ID " + student.getPersonID() + " already exists.");
+            }
+        }
         studentList.add(student);
     }
 
     @Override
-    public void displayAllStudents() {
-        for (Student s : studentList) {
-            System.out.println("\nStudentID: " + s.getPersonID() + "\nStudent Name: " + s.getPersonName() + "\nProgram: " + s.getProgram());
-
-        }
-    }
-
-    @Override
-    public void updateStudent(Student student){
+    public void updateStudent(Student student) {
         for (int i = 0; i < studentList.size(); i++) {
             if (studentList.get(i).getPersonID() == student.getPersonID()) {
                 studentList.set(i, student);
-
-                break;
+                return;
             }
         }
     }
 
     @Override
-    public void deleteStudent(Student student){
-        for (int i = 0; i < studentList.size(); i++) {
-            if (studentList.get(i).getPersonID() == student.getPersonID()) {
-                studentList.remove(i);
+    public void removeStudent(Student student) {
+        // Using Java's built-in removeIf for cleaner code
+        studentList.removeIf(s -> s.getPersonID() == student.getPersonID());
+    }
 
-                break;
-            }
-        }
-
+    @Override
+    public List<Student> getAllStudents() {
+        return studentList;
     }
 }
