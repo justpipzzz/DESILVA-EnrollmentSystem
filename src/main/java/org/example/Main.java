@@ -14,10 +14,11 @@ public class Main {
         StudentRegistration studentService = new StudentRegistration();
         CourseRegistration courseService = new CourseRegistration();
         InstructorRegistration instructorService = new InstructorRegistration();
-        EnrollmentService enrollmentService = new EnrollmentService(); // NEW
+        EnrollmentService enrollmentService = new EnrollmentService();
+        TuitionService tuitionService = new TuitionService(); // NEW
 
         // 2. Inject them into the Registrar
-        CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService, instructorService, enrollmentService); // UPDATED
+        CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService, instructorService, enrollmentService, tuitionService); // UPDATED
 
         // 3. Create mock Department and Section for testing
         Department ccsDepartment = new Department("College of Computer Studies");
@@ -27,13 +28,17 @@ public class Main {
         ccsDepartment.getSections().add(section1A);
         System.out.println("Welcome User!");
 
+        // 4. create a mock Tuition account for testing
+        Student dummyStudent = new Student(999, "John Doe", "BSIT");
+        TuitionFeePayment mockTuitionAccount = new TuitionFeePayment(dummyStudent);
+
         while (true) {
             System.out.println("\nWhat will you do today?");
-            System.out.println("[1] See STUDENT\n[2] See COURSES\n[3] See INSTRUCTORS\n[4] ENROLLMENT & HIERARCHY\n[5] Exit");
+            System.out.println("[1] See STUDENT\n[2] See COURSES\n[3] See INSTRUCTORS\n[4] ENROLLMENT & HIERARCHY\n[5] TUITION MANAGEMENT\n[6] Exit");
             System.out.print("Enter your choice: ");
             int mainChoice = input.nextInt();
 
-            if (mainChoice == 5) { // Shifted to 5
+            if (mainChoice == 6) { // Shifted to 6
                 System.out.println("Exiting System. Goodbye!");
                 System.exit(0);
             }
@@ -254,6 +259,37 @@ public class Main {
                                 break;
                             case 3:
                                 enrollMenu = false;
+                                break;
+                        }
+                    }
+                    break;
+
+                case 5:
+                    boolean tuitionMenu = true;
+                    while (tuitionMenu) {
+                        System.out.println("\nChoose a TUITION option for Student John Doe (ID: 999):");
+                        System.out.println("[1] Assess Tuition (Enter Units)\n[2] Make Payment\n[3] Check Balance\n[4] Back to Main Menu");
+                        System.out.print("Enter your choice: ");
+                        int choice = input.nextInt();
+
+                        switch (choice) {
+                            case 1:
+                                System.out.print("Enter number of enrolled units: ");
+                                int units = input.nextInt();
+                                System.out.println(campusRegistrar.assessTuition(mockTuitionAccount, units));
+                                break;
+                            case 2:
+                                System.out.print("Enter payment amount: Php ");
+                                double amount = input.nextDouble();
+                                System.out.println(campusRegistrar.processPayment(mockTuitionAccount, amount));
+                                break;
+                            case 3:
+                                System.out.println("Current Total Fee: Php " + mockTuitionAccount.getTotalTuitionFee());
+                                System.out.println("Amount Paid: Php " + mockTuitionAccount.getAmountPaid());
+                                System.out.println("Remaining Balance: Php " + campusRegistrar.getBalance(mockTuitionAccount));
+                                break;
+                            case 4:
+                                tuitionMenu = false;
                                 break;
                         }
                     }

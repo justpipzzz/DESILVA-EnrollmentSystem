@@ -54,3 +54,11 @@ The system now fully supports Instructor operations via the `IInstructorService`
 * **CRUD Operations:** Users can register new instructors and view the roster directly from the interactive CLI.
 * **Validation:** Instructor registration utilizes the `DuplicateIDException` to ensure no two instructors share the 
 same ID.
+
+## **Enrollment & Department Hierarchy**
+* **Capacity Validation:** The system dynamically validates section capacity during enrollment, actively throwing a `SectionFullException` when a section's maximum limit is reached.
+* **Hierarchy Mapping:** Capable of displaying complex data relationships linking Departments, Courses, Sections, Instructors, and Enrolled Students.
+
+## **Tuition Fee Management**
+* **Financial Processing:** Handles fee assessments and payment tracking independently via the `ITuitionService` contract.
+* **Balance Tracking:** Accurately calculates total assessed fees, payments applied, and the remaining student balance.

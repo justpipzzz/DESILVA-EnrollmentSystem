@@ -1,10 +1,6 @@
 package org.example.service;
 
-import org.example.model.Course;
-import org.example.model.Student;
-import org.example.model.Instructor;
-import org.example.model.Section;
-import org.example.model.Department;
+import org.example.model.*;
 import org.example.exception.DuplicateIDException;
 import org.example.exception.SectionFullException;
 import java.util.List;
@@ -13,14 +9,18 @@ public class CampusRegistrar {
     private final IStudentService studentService;
     private final ICourseService courseService;
     private final IInstructorService instructorService;
-    private final IEnrollmentService enrollmentService; // NEW
+    private final IEnrollmentService enrollmentService;
+    private final ITuitionService tuitionService; // NEW
 
     // Updated Constructor
-    public CampusRegistrar(IStudentService studentService, ICourseService courseService, IInstructorService instructorService, IEnrollmentService enrollmentService) {
+    public CampusRegistrar(IStudentService studentService, ICourseService courseService,
+                           IInstructorService instructorService, IEnrollmentService enrollmentService,
+                           ITuitionService tuitionService) {
         this.studentService = studentService;
         this.courseService = courseService;
         this.instructorService = instructorService;
-        this.enrollmentService = enrollmentService; // NEW
+        this.enrollmentService = enrollmentService;
+        this.tuitionService = tuitionService; // NEW
     }
 
     // --- STUDENT METHODS ---
@@ -88,5 +88,21 @@ public class CampusRegistrar {
 
     public String getDepartmentHierarchy(Department department) {
         return enrollmentService.viewDepartmentHierarchy(department);
+    }
+
+    // --- TUITION METHODS (NEW) ---
+    public String assessTuition(TuitionFeePayment payment, int units) {
+        double total = tuitionService.calculateFee(payment, units);
+        return "Tuition assessed: $" + total + " for " + units + " units.";
+    }
+
+    public String processPayment(TuitionFeePayment payment, double amount) {
+        tuitionService.makePayment(payment, amount);
+        double balance = tuitionService.getRemainingBalance(payment);
+        return "Payment of $" + amount + " successful. Remaining Balance: $" + balance;
+    }
+
+    public double getBalance(TuitionFeePayment payment) {
+        return tuitionService.getRemainingBalance(payment);
     }
 }
