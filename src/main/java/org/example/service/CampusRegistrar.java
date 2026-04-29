@@ -1,60 +1,108 @@
 package org.example.service;
 
-import org.example.model.Course;
-import org.example.model.Student;
-
-import java.lang.invoke.StringConcatFactory;
+import org.example.model.*;
+import org.example.exception.DuplicateIDException;
+import org.example.exception.SectionFullException;
+import java.util.List;
 
 public class CampusRegistrar {
-    private final StudentReg STUDENT_REG;
-    private final CourseReg COURSE_REG;
+    private final IStudentService studentService;
+    private final ICourseService courseService;
+    private final IInstructorService instructorService;
+    private final IEnrollmentService enrollmentService;
+    private final ITuitionService tuitionService; // NEW
 
-    public CampusRegistrar(StudentReg STUDENT_REG, CourseReg COURSE_REG) {
-        this.STUDENT_REG = STUDENT_REG;
-        this.COURSE_REG = COURSE_REG;
+    // Updated Constructor
+    public CampusRegistrar(IStudentService studentService, ICourseService courseService,
+                           IInstructorService instructorService, IEnrollmentService enrollmentService,
+                           ITuitionService tuitionService) {
+        this.studentService = studentService;
+        this.courseService = courseService;
+        this.instructorService = instructorService;
+        this.enrollmentService = enrollmentService;
+        this.tuitionService = tuitionService; // NEW
     }
 
-    public String displayAllStudents(){
-        STUDENT_REG.displayAllStudents();
-        return "Displaying All Students...";
+    // --- STUDENT METHODS ---
+    public List<Student> getAllStudents() { return studentService.getAllStudents(); }
+
+    public String saveStudent(Student student) {
+        try {
+            studentService.addStudent(student);
+            return "Success: Student saved!";
+        } catch (DuplicateIDException e) {
+            return e.getMessage();
+        }
     }
-
-    public String displayAllCourses(){
-        COURSE_REG.displayAllCourses();
-        return "Displaying All Courses...";
-    }
-
-    public String saveStudent(Student student){
-        STUDENT_REG.saveStudent(student);
-        return "Saving Student...";
-
-    }
-
-    public String saveCourse(Course course){
-        COURSE_REG.saveCourse(course);
-        return "Saving Course...";
-    }
-
-    public String deleteStudent(Student student){
-        STUDENT_REG.deleteStudent(student);
+    public String deleteStudent(Student student) {
+        studentService.removeStudent(student);
         return "Deleting Student...";
     }
-
-    public String deleteCourse(Course course){
-        COURSE_REG.deleteCourse(course);
-        return "Deleting Course...";
-
-    }
-
-    public String updateStudent(Student student){
-        STUDENT_REG.updateStudent(student);
+    public String updateStudent(Student student) {
+        studentService.updateStudent(student);
         return "Updating Student...";
     }
 
-    public String updateCourse(Course course){
-        COURSE_REG.updateCourse(course);
+    // --- COURSE METHODS ---
+    public List<Course> getAllCourses() { return courseService.getAllCourses(); }
+
+    public String saveCourse(Course course) {
+        try {
+            courseService.addCourse(course);
+            return "Success: Course saved!";
+        } catch (DuplicateIDException e) {
+            return e.getMessage();
+        }
+    }
+    public String deleteCourse(Course course) {
+        courseService.removeCourse(course);
+        return "Deleting Course...";
+    }
+    public String updateCourse(Course course) {
+        courseService.updateCourse(course);
         return "Updating Course...";
     }
 
+    // --- INSTRUCTOR METHODS (NEW) ---
+    public List<Instructor> getAllInstructors() { return instructorService.getAllInstructors(); }
 
+    public String saveInstructor(Instructor instructor) {
+        try {
+            instructorService.addInstructor(instructor);
+            return "Success: Instructor saved!";
+        } catch (DuplicateIDException e) {
+            return e.getMessage();
+        }
+    }
+
+    // --- ENROLLMENT METHODS (NEW) ---
+    public String enrollStudent(Student student, Section section) {
+        try {
+            enrollmentService.enrollStudentInSection(student, section);
+            return "Success: " + student.getPersonName() + " has been enrolled in " + section.getSectionName() + "!";
+        } catch (SectionFullException e) {
+            // This catches our second custom exception!
+            return e.getMessage();
+        }
+    }
+
+    public String getDepartmentHierarchy(Department department) {
+        return enrollmentService.viewDepartmentHierarchy(department);
+    }
+
+    // --- TUITION METHODS (NEW) ---
+    public String assessTuition(TuitionFeePayment payment, int units) {
+        double total = tuitionService.calculateFee(payment, units);
+        return "Tuition assessed: $" + total + " for " + units + " units.";
+    }
+
+    public String processPayment(TuitionFeePayment payment, double amount) {
+        tuitionService.makePayment(payment, amount);
+        double balance = tuitionService.getRemainingBalance(payment);
+        return "Payment of $" + amount + " successful. Remaining Balance: $" + balance;
+    }
+
+    public double getBalance(TuitionFeePayment payment) {
+        return tuitionService.getRemainingBalance(payment);
+    }
 }

@@ -1,42 +1,40 @@
 package org.example.service;
 
 import org.example.model.Course;
+import org.example.exception.DuplicateIDException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CourseRegistration implements CourseReg {
-    private ArrayList<Course> courseList =  new ArrayList<>();
+public class CourseRegistration implements ICourseService {
+    private List<Course> courseList = new ArrayList<>();
 
     @Override
-    public void saveCourse(Course course){
+    public void addCourse(Course course) throws DuplicateIDException {
+        for (Course c : courseList) {
+            if (c.getCourseID() == course.getCourseID()) {
+                throw new DuplicateIDException("Error: Course with ID " + course.getCourseID() + " already exists.");
+            }
+        }
         courseList.add(course);
     }
 
     @Override
-    public void displayAllCourses(){
-        for (Course course : courseList){
-            System.out.println("Course ID: " + course.getCourseID() + " Course Name: " + course.getCourseName() + " Program: " + course.getProgram() + "\n");
-        }
-    }
-
-    @Override
-    public void updateCourse(Course course){
+    public void updateCourse(Course course) {
         for (int i = 0; i < courseList.size(); i++) {
             if (courseList.get(i).getCourseID() == course.getCourseID()) {
                 courseList.set(i, course);
-                System.out.println("Course Update Successful!");
-                break;
+                return;
             }
         }
     }
 
     @Override
-    public void deleteCourse(Course course){
-        for (int i = 0; i < courseList.size(); i++) {
-            if (courseList.get(i).getCourseID() == course.getCourseID()) {
-                courseList.remove(i);
-                System.out.println("Course Delete Successful!");
-            }
-            break;
-        }
+    public void removeCourse(Course course) {
+        courseList.removeIf(c -> c.getCourseID() == course.getCourseID());
+    }
+
+    @Override
+    public List<Course> getAllCourses() {
+        return courseList;
     }
 }

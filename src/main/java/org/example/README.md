@@ -22,3 +22,43 @@ Author: Allestair Philip V. De Silva
 
 ### **Instructor Class**
 ![img_2.png](../../../resources/images/img_2.png)
+
+## **System Architecture (Data Hierarchy)**
+
+* **Department**: Represents a college/department which contains multiple Sections.
+* **Section**: Represents a specific class block. It enforces a `maxCapacity` and links to an assigned `Instructor`, a 
+specific `Course`, and a list of enrolled `Student`s.
+* **TuitionFeePayment**: A pure data entity that tracks the financial status, total fees, and amount paid for a specific
+student.
+
+## **Service Layer (Interfaces & Exceptions)**
+The system strictly implements an Interface-Driven Architecture. All business logic is decoupled from data models using
+interface contracts (e.g., `IStudentService`, `IEnrollmentService`).
+
+**Custom Exceptions:**
+To enforce real-world business validations, the system utilizes custom exceptions instead of console printing within the
+service layer:
+* `SectionFullException`: Thrown when an enrollment attempt exceeds a Section's `maxCapacity`.
+* `DuplicateIDException`: Thrown when attempting to register an entity with an existing ID.
+
+## **User Interface (CLI) & Exception Handling**
+The application now runs on a fully Interface-Driven Console Menu.
+* **Separation of Concerns:** The CLI handles all formatting and data presentation directly, fetching pure data from the
+secure Entities via the `CampusRegistrar` bridge.
+* **Robust Error Handling:** The CLI actively catches custom exceptions (like `DuplicateIDException` and 
+`SectionFullException`) using `try-catch` blocks. This ensures the program displays user-friendly error messages and 
+continues running gracefully instead of crashing.
+
+## **Instructor Management**
+The system now fully supports Instructor operations via the `IInstructorService` contract.
+* **CRUD Operations:** Users can register new instructors and view the roster directly from the interactive CLI.
+* **Validation:** Instructor registration utilizes the `DuplicateIDException` to ensure no two instructors share the 
+same ID.
+
+## **Enrollment & Department Hierarchy**
+* **Capacity Validation:** The system dynamically validates section capacity during enrollment, actively throwing a `SectionFullException` when a section's maximum limit is reached.
+* **Hierarchy Mapping:** Capable of displaying complex data relationships linking Departments, Courses, Sections, Instructors, and Enrolled Students.
+
+## **Tuition Fee Management**
+* **Financial Processing:** Handles fee assessments and payment tracking independently via the `ITuitionService` contract.
+* **Balance Tracking:** Accurately calculates total assessed fees, payments applied, and the remaining student balance.
