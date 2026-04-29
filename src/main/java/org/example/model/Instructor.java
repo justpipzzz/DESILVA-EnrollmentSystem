@@ -1,18 +1,7 @@
 package org.example.model;
 
-public class Instructor extends Person{
-
-    private String COURSES = "Unknown";
-
-    public Instructor(int InstructorID, String InstructorName){
-        super(InstructorID,InstructorName);
-
+public class Instructor extends Person {
+    public Instructor(int instructorID, String instructorName) {
+        super(instructorID, instructorName);
     }
-
-    @Override
-    public void mainTask(String work) {
-        System.out.println(work);
-    }
-
-
 }
