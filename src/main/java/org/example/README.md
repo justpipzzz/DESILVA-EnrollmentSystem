@@ -22,3 +22,17 @@ Author: Allestair Philip V. De Silva
 
 ### **Instructor Class**
 ![img_2.png](../../../resources/images/img_2.png)
+
+## **System Architecture (Data Hierarchy)**
+
+* **Department**: Represents a college/department which contains multiple Sections.
+* **Section**: Represents a specific class block. It enforces a `maxCapacity` and links to an assigned `Instructor`, a specific `Course`, and a list of enrolled `Student`s.
+* **TuitionFeePayment**: A pure data entity that tracks the financial status, total fees, and amount paid for a specific student.
+
+## **Service Layer (Interfaces & Exceptions)**
+The system strictly implements an Interface-Driven Architecture. All business logic is decoupled from data models using interface contracts (e.g., `IStudentService`, `IEnrollmentService`).
+
+**Custom Exceptions:**
+To enforce real-world business validations, the system utilizes custom exceptions instead of console printing within the service layer:
+* `SectionFullException`: Thrown when an enrollment attempt exceeds a Section's `maxCapacity`.
+* `DuplicateIDException`: Thrown when attempting to register an entity with an existing ID.
