@@ -36,3 +36,8 @@ The system strictly implements an Interface-Driven Architecture. All business lo
 To enforce real-world business validations, the system utilizes custom exceptions instead of console printing within the service layer:
 * `SectionFullException`: Thrown when an enrollment attempt exceeds a Section's `maxCapacity`.
 * `DuplicateIDException`: Thrown when attempting to register an entity with an existing ID.
+
+## **User Interface (CLI) & Exception Handling**
+The application now runs on a fully Interface-Driven Console Menu.
+* **Separation of Concerns:** The CLI handles all formatting and data presentation directly, fetching pure data from the secure Entities via the `CampusRegistrar` bridge.
+* **Robust Error Handling:** The CLI actively catches custom exceptions (like `DuplicateIDException` and `SectionFullException`) using `try-catch` blocks. This ensures the program displays user-friendly error messages and continues running gracefully instead of crashing.
