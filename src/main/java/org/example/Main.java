@@ -1,12 +1,7 @@
 package org.example;
 
-import org.example.model.Course;
-import org.example.model.Student;
-import org.example.model.Instructor;
-import org.example.service.CampusRegistrar;
-import org.example.service.CourseRegistration;
-import org.example.service.StudentRegistration;
-import org.example.service.InstructorRegistration;
+import org.example.model.*;
+import org.example.service.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -18,20 +13,27 @@ public class Main {
         // 1. Initialize our concrete services
         StudentRegistration studentService = new StudentRegistration();
         CourseRegistration courseService = new CourseRegistration();
-        InstructorRegistration instructorService = new InstructorRegistration(); // NEW
+        InstructorRegistration instructorService = new InstructorRegistration();
+        EnrollmentService enrollmentService = new EnrollmentService(); // NEW
 
         // 2. Inject them into the Registrar
-        CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService, instructorService); // UPDATED
+        CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService, instructorService, enrollmentService); // UPDATED
 
+        // 3. Create mock Department and Section for testing
+        Department ccsDepartment = new Department("College of Computer Studies");
+        Course mockCourse = new Course(101, "Intro to Java", "BSIT");
+        // We set max capacity to 2 so you can easily test your custom exception!
+        Section section1A = new Section("BSIT-1A", 2, mockCourse);
+        ccsDepartment.getSections().add(section1A);
         System.out.println("Welcome User!");
 
         while (true) {
             System.out.println("\nWhat will you do today?");
-            System.out.println("[1] See STUDENT\n[2] See COURSES\n[3] See INSTRUCTORS\n[4] Exit");
+            System.out.println("[1] See STUDENT\n[2] See COURSES\n[3] See INSTRUCTORS\n[4] ENROLLMENT & HIERARCHY\n[5] Exit");
             System.out.print("Enter your choice: ");
             int mainChoice = input.nextInt();
 
-            if (mainChoice == 4) {
+            if (mainChoice == 5) { // Shifted to 5
                 System.out.println("Exiting System. Goodbye!");
                 System.exit(0);
             }
@@ -203,6 +205,55 @@ public class Main {
                                 break;
                             case 3:
                                 instructorMenu = false;
+                                break;
+                        }
+                    }
+                    break;
+                case 4:
+                    boolean enrollMenu = true;
+                    while (enrollMenu) {
+                        System.out.println("\nChoose an ENROLLMENT option below:");
+                        System.out.println("[1] Enroll Student in BSIT-1A\n[2] View Department Hierarchy\n[3] Back to Main Menu");
+                        System.out.print("Enter your choice: ");
+                        int choice = input.nextInt();
+
+                        switch (choice) {
+                            case 1:
+                                System.out.println("Available Students:");
+                                List<Student> currentStudents = campusRegistrar.getAllStudents();
+                                if (currentStudents.isEmpty()) {
+                                    System.out.println("No students available. Please register a student first.");
+                                } else {
+                                    for (Student s : currentStudents) {
+                                        System.out.println("ID: " + s.getPersonID() + " | Name: " + s.getPersonName());
+                                    }
+                                    System.out.print("Enter the ID of the student to enroll: ");
+                                    int targetId = input.nextInt();
+
+                                    // Find the student
+                                    Student studentToEnroll = null;
+                                    for (Student s : currentStudents) {
+                                        if (s.getPersonID() == targetId) {
+                                            studentToEnroll = s;
+                                            break;
+                                        }
+                                    }
+
+                                    if (studentToEnroll != null) {
+                                        String result = campusRegistrar.enrollStudent(studentToEnroll, section1A);
+                                        System.out.println(result);
+                                    } else {
+                                        System.out.println("Student ID not found.");
+                                    }
+                                }
+                                break;
+                            case 2:
+                                // Print the complete data hierarchy!
+                                System.out.println("\n--- Current Department Status ---");
+                                System.out.println(campusRegistrar.getDepartmentHierarchy(ccsDepartment));
+                                break;
+                            case 3:
+                                enrollMenu = false;
                                 break;
                         }
                     }

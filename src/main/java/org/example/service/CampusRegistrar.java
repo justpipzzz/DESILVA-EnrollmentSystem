@@ -3,19 +3,24 @@ package org.example.service;
 import org.example.model.Course;
 import org.example.model.Student;
 import org.example.model.Instructor;
+import org.example.model.Section;
+import org.example.model.Department;
 import org.example.exception.DuplicateIDException;
+import org.example.exception.SectionFullException;
 import java.util.List;
 
 public class CampusRegistrar {
     private final IStudentService studentService;
     private final ICourseService courseService;
-    private final IInstructorService instructorService; // NEW
+    private final IInstructorService instructorService;
+    private final IEnrollmentService enrollmentService; // NEW
 
     // Updated Constructor
-    public CampusRegistrar(IStudentService studentService, ICourseService courseService, IInstructorService instructorService) {
+    public CampusRegistrar(IStudentService studentService, ICourseService courseService, IInstructorService instructorService, IEnrollmentService enrollmentService) {
         this.studentService = studentService;
         this.courseService = courseService;
-        this.instructorService = instructorService; // NEW
+        this.instructorService = instructorService;
+        this.enrollmentService = enrollmentService; // NEW
     }
 
     // --- STUDENT METHODS ---
@@ -68,5 +73,20 @@ public class CampusRegistrar {
         } catch (DuplicateIDException e) {
             return e.getMessage();
         }
+    }
+
+    // --- ENROLLMENT METHODS (NEW) ---
+    public String enrollStudent(Student student, Section section) {
+        try {
+            enrollmentService.enrollStudentInSection(student, section);
+            return "Success: " + student.getPersonName() + " has been enrolled in " + section.getSectionName() + "!";
+        } catch (SectionFullException e) {
+            // This catches our second custom exception!
+            return e.getMessage();
+        }
+    }
+
+    public String getDepartmentHierarchy(Department department) {
+        return enrollmentService.viewDepartmentHierarchy(department);
     }
 }
