@@ -2,9 +2,11 @@ package org.example;
 
 import org.example.model.Course;
 import org.example.model.Student;
+import org.example.model.Instructor;
 import org.example.service.CampusRegistrar;
 import org.example.service.CourseRegistration;
 import org.example.service.StudentRegistration;
+import org.example.service.InstructorRegistration;
 
 import java.util.List;
 import java.util.Scanner;
@@ -16,19 +18,20 @@ public class Main {
         // 1. Initialize our concrete services
         StudentRegistration studentService = new StudentRegistration();
         CourseRegistration courseService = new CourseRegistration();
+        InstructorRegistration instructorService = new InstructorRegistration(); // NEW
 
         // 2. Inject them into the Registrar
-        CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService);
+        CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService, instructorService); // UPDATED
 
         System.out.println("Welcome User!");
 
         while (true) {
             System.out.println("\nWhat will you do today?");
-            System.out.println("[1] See STUDENT\n[2] See COURSES\n[3] Exit");
+            System.out.println("[1] See STUDENT\n[2] See COURSES\n[3] See INSTRUCTORS\n[4] Exit");
             System.out.print("Enter your choice: ");
             int mainChoice = input.nextInt();
 
-            if (mainChoice == 3) {
+            if (mainChoice == 4) {
                 System.out.println("Exiting System. Goodbye!");
                 System.exit(0);
             }
@@ -162,6 +165,44 @@ public class Main {
                                 break;
                             case 5:
                                 courseMenu = false;
+                                break;
+                        }
+                    }
+                    break;
+                case 3:
+                    boolean instructorMenu = true;
+                    while (instructorMenu) {
+                        System.out.println("\nChoose an INSTRUCTOR option below:");
+                        System.out.println("[1] Save Instructor\n[2] Display Instructors\n[3] Back to Main Menu");
+                        System.out.print("Enter your choice: ");
+                        int choice = input.nextInt();
+
+                        switch (choice) {
+                            case 1:
+                                System.out.println("Please input INSTRUCTOR info below:");
+                                System.out.print("Instructor ID: ");
+                                int instID = input.nextInt();
+                                input.nextLine(); // Consume newline
+                                System.out.print("Instructor Name: ");
+                                String instName = input.nextLine();
+
+                                String saveMsg = campusRegistrar.saveInstructor(new Instructor(instID, instName));
+                                System.out.println(saveMsg);
+                                break;
+                            case 2:
+                                List<Instructor> instructors = campusRegistrar.getAllInstructors();
+                                if (instructors.isEmpty()) {
+                                    System.out.println("No instructors registered yet.");
+                                } else {
+                                    System.out.println("\n--- Registered Instructors ---");
+                                    for (Instructor inst : instructors) {
+                                        // Using the getters from the Person parent class!
+                                        System.out.println("ID: " + inst.getPersonID() + " | Name: " + inst.getPersonName());
+                                    }
+                                }
+                                break;
+                            case 3:
+                                instructorMenu = false;
                                 break;
                         }
                     }
