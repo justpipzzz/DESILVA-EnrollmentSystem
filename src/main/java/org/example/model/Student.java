@@ -3,7 +3,6 @@ package org.example.model;
 import java.util.ArrayList;
 import java.util.List;
 
-// CHILD CLASS
 public class Student extends Person {
     private String department;
     private String program;
@@ -13,7 +12,7 @@ public class Student extends Person {
 
     public Student(int personID, String lastName, String firstName, String middleName,
                    String department, String program, String yearLevel, String sectionName) {
-        super(personID, lastName, firstName, middleName); // Calls the Person constructor
+        super(personID, lastName, firstName, middleName);
         this.department = department;
         this.program = program;
         this.yearLevel = yearLevel;
@@ -23,6 +22,11 @@ public class Student extends Person {
 
     public void addCourse(Course course) {
         this.enrolledCourses.add(course);
+    }
+
+    // Add a method to add multiple courses at once (block section enrollment!)
+    public void addAllCourses(List<Course> courses) {
+        this.enrolledCourses.addAll(courses);
     }
 
     public String getDepartment() { return department; }

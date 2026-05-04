@@ -1,42 +1,37 @@
 package org.example.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Section {
     private String sectionName;
-    private String department;
-    private String program;
     private int maxCapacity;
-    private Course course;
-    private Instructor assignedInstructor;
+    // HAS-A: Maps a specific Course to a specific Instructor!
+    private Map<Course, Instructor> courseInstructors;
     private List<Student> enrolledStudents;
 
-    public Section(String sectionName, String department, String program, int maxCapacity) {
+    public Section(String sectionName, int maxCapacity) {
         this.sectionName = sectionName;
-        this.department = department;
-        this.program = program;
         this.maxCapacity = maxCapacity;
+        this.courseInstructors = new HashMap<>();
         this.enrolledStudents = new ArrayList<>();
     }
 
     public String getSectionName() { return sectionName; }
     public void setSectionName(String sectionName) { this.sectionName = sectionName; }
 
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
-
-    public String getProgram() { return program; }
-    public void setProgram(String program) { this.program = program; }
-
     public int getMaxCapacity() { return maxCapacity; }
     public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
 
-    public Course getCourse() { return course; }
-    public void setCourse(Course course) { this.course = course; }
+    public Map<Course, Instructor> getCourseInstructors() { return courseInstructors; }
 
-    public Instructor getAssignedInstructor() { return assignedInstructor; }
-    public void setAssignedInstructor(Instructor assignedInstructor) { this.assignedInstructor = assignedInstructor; }
+    // New method to assign a course and its instructor at the same time
+    public void assignCourseAndInstructor(Course course, Instructor instructor) {
+        this.courseInstructors.put(course, instructor);
+    }
 
     public List<Student> getEnrolledStudents() { return enrolledStudents; }
+    public void addStudent(Student student) { this.enrolledStudents.add(student); }
 }

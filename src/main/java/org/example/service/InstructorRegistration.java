@@ -1,7 +1,6 @@
 package org.example.service;
 
 import org.example.model.Instructor;
-import org.example.model.Section;
 import org.example.exception.DuplicateIDException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +20,7 @@ public class InstructorRegistration implements IInstructorService {
     }
 
     @Override
-    public void assignInstructorToSection(Instructor instructor, Section section) {
-        section.setAssignedInstructor(instructor);
-    }
-
-    @Override
     public String getInstructorDetails(Instructor instructor) {
-        // FIX: Changed instructor.getPersonName() to instructor.getFullName()
         return "Instructor ID: " + instructor.getPersonID() + " | Name: " + instructor.getFullName();
     }
 

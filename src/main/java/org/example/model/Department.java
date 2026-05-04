@@ -5,16 +5,16 @@ import java.util.List;
 
 public class Department {
     private String departmentName;
-    private List<Section> sections;
+    private List<Program> programs; // HAS-A relationship with Program
 
     public Department(String departmentName) {
         this.departmentName = departmentName;
-        this.sections = new ArrayList<>();
+        this.programs = new ArrayList<>();
     }
 
     public String getDepartmentName() { return departmentName; }
     public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
 
-    public List<Section> getSections() { return sections; }
-    public void setSections(List<Section> sections) { this.sections = sections; }
+    public List<Program> getPrograms() { return programs; }
+    public void addProgram(Program program) { this.programs.add(program); }
 }
