@@ -29,7 +29,8 @@ public class EnrollmentService implements IEnrollmentService {
                     .append("/").append(section.getMaxCapacity()).append("]\n");
 
             if (section.getAssignedInstructor() != null) {
-                builder.append("     Instructor: ").append(section.getAssignedInstructor().getPersonName()).append("\n");
+                // FIX: Changed getPersonName() to getFullName()
+                builder.append("     Instructor: ").append(section.getAssignedInstructor().getFullName()).append("\n");
             }
             if (section.getCourse() != null) {
                 builder.append("     Course: ").append(section.getCourse().getCourseName()).append("\n");

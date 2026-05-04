@@ -27,7 +27,8 @@ public class InstructorRegistration implements IInstructorService {
 
     @Override
     public String getInstructorDetails(Instructor instructor) {
-        return "Instructor ID: " + instructor.getPersonID() + " | Name: " + instructor.getPersonName();
+        // FIX: Changed instructor.getPersonName() to instructor.getFullName()
+        return "Instructor ID: " + instructor.getPersonID() + " | Name: " + instructor.getFullName();
     }
 
     @Override

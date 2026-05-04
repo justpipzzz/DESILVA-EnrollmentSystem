@@ -10,9 +10,8 @@ public class CampusRegistrar {
     private final ICourseService courseService;
     private final IInstructorService instructorService;
     private final IEnrollmentService enrollmentService;
-    private final ITuitionService tuitionService; // NEW
+    private final ITuitionService tuitionService;
 
-    // Updated Constructor
     public CampusRegistrar(IStudentService studentService, ICourseService courseService,
                            IInstructorService instructorService, IEnrollmentService enrollmentService,
                            ITuitionService tuitionService) {
@@ -20,7 +19,7 @@ public class CampusRegistrar {
         this.courseService = courseService;
         this.instructorService = instructorService;
         this.enrollmentService = enrollmentService;
-        this.tuitionService = tuitionService; // NEW
+        this.tuitionService = tuitionService;
     }
 
     // --- STUDENT METHODS ---
@@ -34,13 +33,15 @@ public class CampusRegistrar {
             return e.getMessage();
         }
     }
-    public String deleteStudent(Student student) {
-        studentService.removeStudent(student);
-        return "Deleting Student...";
-    }
+
     public String updateStudent(Student student) {
         studentService.updateStudent(student);
-        return "Updating Student...";
+        return "Success: Student updated!";
+    }
+
+    public String deleteStudent(Student student) {
+        studentService.removeStudent(student);
+        return "Success: Student removed!";
     }
 
     // --- COURSE METHODS ---
@@ -54,16 +55,18 @@ public class CampusRegistrar {
             return e.getMessage();
         }
     }
-    public String deleteCourse(Course course) {
-        courseService.removeCourse(course);
-        return "Deleting Course...";
-    }
+
     public String updateCourse(Course course) {
         courseService.updateCourse(course);
-        return "Updating Course...";
+        return "Success: Course updated!";
     }
 
-    // --- INSTRUCTOR METHODS (NEW) ---
+    public String deleteCourse(Course course) {
+        courseService.removeCourse(course);
+        return "Success: Course removed!";
+    }
+
+    // --- INSTRUCTOR METHODS ---
     public List<Instructor> getAllInstructors() { return instructorService.getAllInstructors(); }
 
     public String saveInstructor(Instructor instructor) {
@@ -75,13 +78,12 @@ public class CampusRegistrar {
         }
     }
 
-    // --- ENROLLMENT METHODS (NEW) ---
+    // --- ENROLLMENT METHODS ---
     public String enrollStudent(Student student, Section section) {
         try {
             enrollmentService.enrollStudentInSection(student, section);
-            return "Success: " + student.getPersonName() + " has been enrolled in " + section.getSectionName() + "!";
+            return "Success: " + student.getFullName() + " has been enrolled in " + section.getSectionName() + "!";
         } catch (SectionFullException e) {
-            // This catches our second custom exception!
             return e.getMessage();
         }
     }
@@ -90,7 +92,11 @@ public class CampusRegistrar {
         return enrollmentService.viewDepartmentHierarchy(department);
     }
 
-    // --- TUITION METHODS (NEW) ---
+    // --- TUITION METHODS ---
+    public TuitionFeePayment getTuitionAccount(Student student) {
+        return tuitionService.getOrCreateAccount(student);
+    }
+
     public String assessTuition(TuitionFeePayment payment, int units) {
         double total = tuitionService.calculateFee(payment, units);
         return "Tuition assessed: $" + total + " for " + units + " units.";
