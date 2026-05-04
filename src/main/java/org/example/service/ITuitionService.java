@@ -5,7 +5,7 @@ import org.example.model.Student;
 
 public interface ITuitionService {
     TuitionFeePayment getOrCreateAccount(Student student);
-    double calculateFee(TuitionFeePayment payment, int units);
+    double calculateFee(TuitionFeePayment payment); // No longer needs 'units' inputted!
     void makePayment(TuitionFeePayment payment, double amount);
     double getRemainingBalance(TuitionFeePayment payment);
 }
