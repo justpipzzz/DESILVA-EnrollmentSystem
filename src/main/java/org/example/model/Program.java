@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Program {
-    private String programName; // e.g., BSIT, BSCS
-    private List<Section> sections; // HAS-A relationship with Section
+    private String programName;
+    private List<Section> sections;
 
     public Program(String programName) {
         this.programName = programName;
         this.sections = new ArrayList<>();
     }
 
-    public String getProgramName() { return programName; }
-    public void setProgramName(String programName) { this.programName = programName; }
-
-    public List<Section> getSections() { return sections; }
     public void addSection(Section section) { this.sections.add(section); }
+    public String getProgramName() { return programName; }
+    public List<Section> getSections() { return sections; }
 }
