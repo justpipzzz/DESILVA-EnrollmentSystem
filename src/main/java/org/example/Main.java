@@ -19,7 +19,7 @@ public class Main {
         EnrollmentService enrollmentService = new EnrollmentService();
         TuitionService tuitionService = new TuitionService();
         SectionRegistration sectionService = new SectionRegistration();
-        DepartmentRegistration departmentService = new DepartmentRegistration(); // NEW
+        DepartmentRegistration departmentService = new DepartmentRegistration();
 
         CampusRegistrar campusRegistrar = new CampusRegistrar(studentService, courseService, instructorService, enrollmentService, tuitionService, sectionService, departmentService);
 
@@ -29,10 +29,16 @@ public class Main {
 
         while (true) {
             try {
-                System.out.println("\n--- MAIN MENU ---");
-                System.out.println("[1] Manage Students\n[2] Manage Courses\n[3] Manage Instructors");
-                System.out.println("[4] Manage Hierarchy & Sections (Depts -> Programs -> Sections)");
-                System.out.println("[5] Enrollment Processing\n[6] Tuition Management\n[7] Exit");
+                System.out.println("\n========================================");
+                System.out.println("               MAIN MENU                ");
+                System.out.println("========================================");
+                System.out.println("[1] Manage Students");
+                System.out.println("[2] Manage Courses");
+                System.out.println("[3] Manage Instructors");
+                System.out.println("[4] Manage Departments");
+                System.out.println("[5] Enrollment Processing");
+                System.out.println("[6] Tuition Management");
+                System.out.println("[7] Exit");
                 System.out.print("Select an option: ");
                 int mainChoice = input.nextInt();
                 input.nextLine();
@@ -83,7 +89,7 @@ public class Main {
                                     case 4: studentMenu = false; break;
                                     default: System.out.println("Invalid selection.");
                                 }
-                            } catch (InputMismatchException e) { System.out.println("Invalid input."); input.nextLine(); }
+                            } catch (InputMismatchException e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
                         break;
 
@@ -100,9 +106,8 @@ public class Main {
                                     case 1:
                                         System.out.print("Course ID: "); int courseID = input.nextInt(); input.nextLine();
                                         System.out.print("Course Name: "); String courseName = input.nextLine();
-                                        System.out.print("Program Code: "); String courseProgram = input.nextLine();
                                         System.out.print("Units: "); int units = input.nextInt(); input.nextLine();
-                                        System.out.println(campusRegistrar.saveCourse(new Course(courseID, courseName, courseProgram, units)));
+                                        System.out.println(campusRegistrar.saveCourse(new Course(courseID, courseName, units)));
                                         break;
                                     case 2:
                                         List<Course> courses = campusRegistrar.getAllCourses();
@@ -115,7 +120,7 @@ public class Main {
                                     case 5: courseMenu = false; break;
                                     default: System.out.println("Invalid selection.");
                                 }
-                            } catch (InputMismatchException e) { System.out.println("Invalid input."); input.nextLine(); }
+                            } catch (InputMismatchException e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
                         break;
 
@@ -144,7 +149,7 @@ public class Main {
                                         break;
                                     case 3: instructorMenu = false; break;
                                 }
-                            } catch (InputMismatchException e) { System.out.println("Invalid input."); input.nextLine(); }
+                            } catch (InputMismatchException e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
                         break;
 
@@ -152,12 +157,12 @@ public class Main {
                         boolean hierarchyMenu = true;
                         while (hierarchyMenu) {
                             try {
-                                System.out.println("\n--- MANAGE UNIVERSITY HIERARCHY ---");
+                                System.out.println("\n--- MANAGE DEPARTMENTS ---");
                                 System.out.println("[1] Create College Department");
                                 System.out.println("[2] Add Program to Department");
                                 System.out.println("[3] Add Block Section to Program");
                                 System.out.println("[4] Assign Course & Instructor to a Section");
-                                System.out.println("[5] View Full University Hierarchy");
+                                System.out.println("[5] View Full University Table");
                                 System.out.println("[6] Return");
                                 System.out.print("Select an option: ");
                                 int choice = input.nextInt(); input.nextLine();
@@ -170,72 +175,155 @@ public class Main {
                                         break;
                                     case 2:
                                         if (campusRegistrar.getAllDepartments().isEmpty()) { System.out.println("Create a Department first!"); break; }
-                                        System.out.println("Available Departments:");
-                                        for (Department d : campusRegistrar.getAllDepartments()) System.out.println("- " + d.getDepartmentName());
-                                        System.out.print("Type target Department Name: "); String targetDept = input.nextLine();
 
                                         Department foundDept = null;
-                                        for (Department d : campusRegistrar.getAllDepartments()) if (d.getDepartmentName().equalsIgnoreCase(targetDept)) foundDept = d;
+                                        while (foundDept == null) {
+                                            System.out.println("\n[ Available Departments ]");
+                                            for (Department d : campusRegistrar.getAllDepartments()) System.out.println("- " + d.getDepartmentName());
+
+                                            System.out.print("\nType target Department Name (or 'cancel'): ");
+                                            String targetDept = input.nextLine();
+                                            if (targetDept.equalsIgnoreCase("cancel")) break;
+
+                                            for (Department d : campusRegistrar.getAllDepartments()) if (d.getDepartmentName().equalsIgnoreCase(targetDept)) foundDept = d;
+                                            if (foundDept == null) System.out.println("Department not found. Please check spelling.");
+                                        }
 
                                         if (foundDept != null) {
                                             System.out.print("Enter Program Name (e.g., BSIT): ");
                                             foundDept.addProgram(new Program(input.nextLine()));
                                             System.out.println("Program successfully added to " + foundDept.getDepartmentName());
-                                        } else System.out.println("Department not found.");
+                                        }
                                         break;
                                     case 3:
-                                        System.out.print("Enter target Program Name: "); String targetProg = input.nextLine();
                                         Program foundProg = null;
-                                        for (Department d : campusRegistrar.getAllDepartments()) {
-                                            for (Program p : d.getPrograms()) if (p.getProgramName().equalsIgnoreCase(targetProg)) foundProg = p;
+                                        while (foundProg == null) {
+                                            // Show available programs first!
+                                            System.out.println("\n[ Available Programs ]");
+                                            boolean hasPrograms = false;
+                                            for (Department d : campusRegistrar.getAllDepartments()) {
+                                                for (Program p : d.getPrograms()) {
+                                                    System.out.println("- " + p.getProgramName() + " (under " + d.getDepartmentName() + ")");
+                                                    hasPrograms = true;
+                                                }
+                                            }
+                                            if (!hasPrograms) {
+                                                System.out.println("No programs exist yet. Please add a program first.");
+                                                break; // Breaks out of the while loop
+                                            }
+
+                                            System.out.print("\nEnter target Program Name (or 'cancel'): ");
+                                            String targetProg = input.nextLine();
+                                            if (targetProg.equalsIgnoreCase("cancel")) break;
+
+                                            for (Department d : campusRegistrar.getAllDepartments()) {
+                                                for (Program p : d.getPrograms()) if (p.getProgramName().equalsIgnoreCase(targetProg)) foundProg = p;
+                                            }
+                                            if (foundProg == null) System.out.println("Program not found. Please check spelling.");
                                         }
+
                                         if (foundProg != null) {
                                             System.out.print("Enter Section Name (e.g., IT1A): "); String secName = input.nextLine();
                                             System.out.print("Enter Max Capacity: "); int maxCap = input.nextInt(); input.nextLine();
                                             Section newSec = new Section(secName, maxCap);
                                             foundProg.addSection(newSec);
-                                            campusRegistrar.saveSection(newSec); // Save to global registry too
+                                            campusRegistrar.saveSection(newSec);
                                             System.out.println("Section added to " + foundProg.getProgramName());
-                                        } else System.out.println("Program not found.");
+                                        }
                                         break;
                                     case 4:
-                                        System.out.print("Enter target Section Name: "); String targetSec = input.nextLine();
                                         Section foundSec = null;
-                                        for (Section s : campusRegistrar.getAllSections()) if (s.getSectionName().equalsIgnoreCase(targetSec)) foundSec = s;
+                                        while (foundSec == null) {
+                                            // Show available sections first!
+                                            System.out.println("\n[ Available Sections ]");
+                                            List<Section> allSections = campusRegistrar.getAllSections();
+                                            if (allSections.isEmpty()) {
+                                                System.out.println("No sections exist yet. Please add a section first.");
+                                                break;
+                                            }
+                                            for (Section s : allSections) {
+                                                System.out.println("- " + s.getSectionName());
+                                            }
+
+                                            System.out.print("\nEnter target Section Name (or 'cancel'): ");
+                                            String targetSec = input.nextLine();
+                                            if (targetSec.equalsIgnoreCase("cancel")) break;
+
+                                            for (Section s : allSections) if (s.getSectionName().equalsIgnoreCase(targetSec)) foundSec = s;
+                                            if (foundSec == null) System.out.println("Section not found. Please check spelling.");
+                                        }
 
                                         if (foundSec != null) {
-                                            System.out.print("Enter Course ID to add: "); int cID = input.nextInt(); input.nextLine();
-                                            System.out.print("Enter Instructor ID to assign to this course: "); int iID = input.nextInt(); input.nextLine();
-
                                             Course cFound = null; Instructor iFound = null;
-                                            for (Course c : campusRegistrar.getAllCourses()) if (c.getCourseID() == cID) cFound = c;
-                                            for (Instructor i : campusRegistrar.getAllInstructors()) if (i.getPersonID() == iID) iFound = i;
 
-                                            if (cFound != null && iFound != null) {
-                                                foundSec.assignCourseAndInstructor(cFound, iFound);
-                                                System.out.println("Successfully assigned " + iFound.getFullName() + " to teach " + cFound.getCourseName() + " for section " + foundSec.getSectionName());
-                                            } else System.out.println("Invalid Course ID or Instructor ID.");
-                                        } else System.out.println("Section not found.");
+                                            while(cFound == null) {
+                                                // Show available courses first!
+                                                System.out.println("\n[ Available Courses ]");
+                                                for (Course c : campusRegistrar.getAllCourses()) {
+                                                    System.out.println("ID: " + c.getCourseID() + " | " + c.getCourseName());
+                                                }
+
+                                                System.out.print("\nEnter Course ID to add (or 0 to cancel): ");
+                                                int cID = input.nextInt(); input.nextLine();
+                                                if (cID == 0) break;
+                                                for (Course c : campusRegistrar.getAllCourses()) if (c.getCourseID() == cID) cFound = c;
+                                                if (cFound == null) System.out.println("Course ID not found.");
+                                            }
+                                            if (cFound == null) break;
+
+                                            while(iFound == null) {
+                                                // Show available instructors first!
+                                                System.out.println("\n[ Available Instructors ]");
+                                                for (Instructor i : campusRegistrar.getAllInstructors()) {
+                                                    System.out.println("ID: " + i.getPersonID() + " | " + i.getFullName());
+                                                }
+
+                                                System.out.print("\nEnter Instructor ID to assign (or 0 to cancel): ");
+                                                int iID = input.nextInt(); input.nextLine();
+                                                if (iID == 0) break;
+                                                for (Instructor i : campusRegistrar.getAllInstructors()) if (i.getPersonID() == iID) iFound = i;
+                                                if (iFound == null) System.out.println("Instructor ID not found.");
+                                            }
+                                            if (iFound == null) break;
+
+                                            foundSec.assignCourseAndInstructor(cFound, iFound);
+                                            System.out.println("Successfully assigned " + iFound.getFullName() + " to teach " + cFound.getCourseName() + " for " + foundSec.getSectionName());
+                                        }
                                         break;
                                     case 5:
-                                        System.out.println("\n[ UNIVERSITY HIERARCHY TREE ]");
+                                        System.out.println("\n=================================================================================================================");
+                                        System.out.printf("%-15s | %-15s | %-12s | %-10s | %-25s | %-20s%n", "Department", "Program", "Section", "Capacity", "Course", "Instructor");
+                                        System.out.println("-----------------------------------------------------------------------------------------------------------------");
+
+                                        boolean hasData = false;
                                         for (Department d : campusRegistrar.getAllDepartments()) {
-                                            System.out.println("🏢 " + d.getDepartmentName());
                                             for (Program p : d.getPrograms()) {
-                                                System.out.println(" ├── 🎓 " + p.getProgramName());
                                                 for (Section s : p.getSections()) {
-                                                    System.out.println(" │    ├── 📋 Section: " + s.getSectionName() + " (Capacity: " + s.getEnrolledStudents().size() + "/" + s.getMaxCapacity() + ")");
-                                                    for (Map.Entry<Course, Instructor> entry : s.getCourseInstructors().entrySet()) {
-                                                        System.out.println(" │    │    └── 📖 " + entry.getKey().getCourseName() + " taught by " + entry.getValue().getFullName());
+                                                    hasData = true;
+                                                    if (s.getCourseInstructors().isEmpty()) {
+                                                        System.out.printf("%-15s | %-15s | %-12s | %-10s | %-25s | %-20s%n",
+                                                                d.getDepartmentName(), p.getProgramName(), s.getSectionName(),
+                                                                s.getEnrolledStudents().size() + "/" + s.getMaxCapacity(), "No Course Added", "Unassigned");
+                                                    } else {
+                                                        for (Map.Entry<Course, Instructor> entry : s.getCourseInstructors().entrySet()) {
+                                                            System.out.printf("%-15s | %-15s | %-12s | %-10s | %-25s | %-20s%n",
+                                                                    d.getDepartmentName(), p.getProgramName(), s.getSectionName(),
+                                                                    s.getEnrolledStudents().size() + "/" + s.getMaxCapacity(),
+                                                                    entry.getKey().getCourseName(), entry.getValue().getFullName());
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+                                        if (!hasData) {
+                                            System.out.println("No department records found. Please create the hierarchy first.");
+                                        }
+                                        System.out.println("=================================================================================================================");
                                         break;
                                     case 6: hierarchyMenu = false; break;
                                     default: System.out.println("Invalid selection.");
                                 }
-                            } catch (InputMismatchException e) { System.out.println("Invalid input."); input.nextLine(); }
+                            } catch (InputMismatchException e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
                         break;
 
@@ -263,15 +351,18 @@ public class Main {
 
                                     System.out.println("\n[ Available Block Sections ]");
                                     for(Section s : activeSections) System.out.println("- " + s.getSectionName() + " | Seats: " + s.getEnrolledStudents().size() + "/" + s.getMaxCapacity());
-                                    System.out.print("Enter Exact Section Name to Enroll: ");
-                                    String selectedSecName = input.nextLine();
 
                                     Section targetSection = null;
-                                    for(Section s : activeSections) if(s.getSectionName().equalsIgnoreCase(selectedSecName)) targetSection = s;
+                                    while (targetSection == null) {
+                                        System.out.print("\nEnter Exact Section Name to Enroll (or 'cancel'): ");
+                                        String selectedSecName = input.nextLine();
+                                        if(selectedSecName.equalsIgnoreCase("cancel")) break;
 
-                                    if (targetSection == null) { System.out.println("Section not found. Enrollment aborted."); break; }
+                                        for(Section s : activeSections) if(s.getSectionName().equalsIgnoreCase(selectedSecName)) targetSection = s;
+                                        if (targetSection == null) System.out.println("Section not found. Please try again.");
+                                    }
+                                    if (targetSection == null) break;
 
-                                    // MAGIC: Search the hierarchy to auto-fill the student's Dept and Program!
                                     String autoDept = "Unknown";
                                     String autoProg = "Unknown";
                                     for (Department d : campusRegistrar.getAllDepartments()) {
@@ -285,8 +376,6 @@ public class Main {
 
                                     int newStudId = nextStudentId++;
                                     Student newStudent = new Student(newStudId, lName, fName, mName, autoDept, autoProg, yearLvl, targetSection.getSectionName());
-
-                                    // Extract all courses from the Map's keys and add them to the student
                                     newStudent.addAllCourses(new ArrayList<>(targetSection.getCourseInstructors().keySet()));
 
                                     try {
@@ -297,7 +386,7 @@ public class Main {
                                         System.out.println("Assigned to: " + autoDept + " -> " + autoProg + " -> " + targetSection.getSectionName());
                                     } catch (Exception e) { System.out.println("Enrollment Failed: " + e.getMessage()); }
                                 } else if (choice == 2) enrollMenu = false;
-                            } catch (InputMismatchException e) { System.out.println("Invalid input."); input.nextLine(); }
+                            } catch (InputMismatchException e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
                         break;
 
@@ -316,14 +405,18 @@ public class Main {
                                     List<Student> activeStudents = campusRegistrar.getAllStudents();
                                     if (activeStudents.isEmpty()) { System.out.println("No registered students found in the system."); break; }
 
-                                    for(Student s : activeStudents) System.out.println("ID: " + s.getPersonID() + " | Name: " + s.getFullName());
-                                    System.out.print("Enter Student ID: ");
-                                    int targetId = input.nextInt(); input.nextLine();
-
                                     Student targetStudent = null;
-                                    for(Student s : activeStudents) if(s.getPersonID() == targetId) targetStudent = s;
+                                    while (targetStudent == null) {
+                                        System.out.println("\n[ Select Student ]");
+                                        for(Student s : activeStudents) System.out.println("ID: " + s.getPersonID() + " | Name: " + s.getFullName());
+                                        System.out.print("\nEnter Student ID (or 0 to cancel): ");
+                                        int targetId = input.nextInt(); input.nextLine();
+                                        if(targetId == 0) break;
 
-                                    if (targetStudent == null) { System.out.println("Student ID not recognized."); break; }
+                                        for(Student s : activeStudents) if(s.getPersonID() == targetId) targetStudent = s;
+                                        if (targetStudent == null) System.out.println("Student ID not recognized. Try again.");
+                                    }
+                                    if (targetStudent == null) break;
 
                                     TuitionFeePayment account = campusRegistrar.getTuitionAccount(targetStudent);
 
@@ -350,11 +443,11 @@ public class Main {
                                         }
                                     }
                                 }
-                            } catch (InputMismatchException e) { System.out.println("Invalid input."); input.nextLine(); }
+                            } catch (InputMismatchException e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
                         break;
                 }
-            } catch (InputMismatchException e) { System.out.println("Critical error."); input.nextLine(); }
+            } catch (InputMismatchException e) { System.out.println("Critical error. Invalid format. Try again."); input.nextLine(); }
         }
     }
 }
