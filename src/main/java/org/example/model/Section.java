@@ -15,7 +15,6 @@ public class Section {
         this.enrolledStudents = new ArrayList<>();
     }
 
-    // THE MISSING METHOD THAT FIXES YOUR ERROR:
     public void addStudent(Student student) {
         this.enrolledStudents.add(student);
     }
@@ -29,7 +28,7 @@ public class Section {
     public Map<Course, Instructor> getCourseInstructors() { return courseInstructors; }
     public List<Student> getEnrolledStudents() { return enrolledStudents; }
 
-    // Helper for the "contains" logic used in Main.java
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

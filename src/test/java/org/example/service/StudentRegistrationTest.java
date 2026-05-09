@@ -1,41 +1,53 @@
 package org.example.service;
 
-import org.example.exception.DuplicateIDException;
 import org.example.model.Student;
+import org.example.exception.DuplicateIDException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class StudentRegistrationTest {
-
-    private StudentRegistration studentService;
+    private StudentRegistration service;
 
     @BeforeEach
     void setUp() {
-        studentService = new StudentRegistration();
+        service = new StudentRegistration();
     }
 
     @Test
-    void testAddStudentSuccess() {
-        Student s1 = new Student(101, "Alice", "BSIT");
-
-        // Assert that adding a brand new student does NOT throw an error
-        assertDoesNotThrow(() -> studentService.addStudent(s1));
-        assertEquals(1, studentService.getAllStudents().size(), "List should have 1 student");
+    void testAddStudent_Success() throws DuplicateIDException {
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        service.addStudent(s1);
+        assertEquals(1, service.getAllStudents().size());
     }
 
     @Test
-    void testDuplicateIdThrowsException() {
-        Student s1 = new Student(101, "Alice", "BSIT");
-        Student s2 = new Student(101, "Bob", "BSCS"); // Uh oh, same ID!
+    void testAddStudent_DuplicateID_ThrowsException() {
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        Student s2 = new Student(1001, "Smith", "Jane", "A", "CITE", "BSIT", "1", "IT1A");
+        
+        assertDoesNotThrow(() -> service.addStudent(s1));
+        assertThrows(DuplicateIDException.class, () -> service.addStudent(s2));
+    }
 
-        // Add the first student successfully
-        assertDoesNotThrow(() -> studentService.addStudent(s1));
+    @Test
+    void testUpdateStudent() throws DuplicateIDException {
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        service.addStudent(s1);
 
-        // Assert that adding the second student THROWS our custom exception
-        assertThrows(DuplicateIDException.class, () -> {
-            studentService.addStudent(s2);
-        }, "Adding a duplicate ID should throw DuplicateIDException");
+        Student updatedStudent = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "2", "IT2A");
+        service.updateStudent(updatedStudent);
+
+        assertEquals("2", service.getAllStudents().get(0).getYearLevel());
+        assertEquals("IT2A", service.getAllStudents().get(0).getSectionName());
+    }
+
+    @Test
+    void testRemoveStudent() throws DuplicateIDException {
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        service.addStudent(s1);
+        
+        service.removeStudent(s1);
+        assertTrue(service.getAllStudents().isEmpty());
     }
 }

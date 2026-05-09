@@ -10,18 +10,35 @@ public class InstructorRegistration implements IInstructorService {
 
     @Override
     public void addInstructor(Instructor instructor) throws DuplicateIDException {
-        // Check for duplicates
         for (Instructor i : instructorList) {
             if (i.getPersonID() == instructor.getPersonID()) {
-                throw new DuplicateIDException("Error: Instructor with ID " + instructor.getPersonID() + " already exists.");
+                throw new DuplicateIDException("Error: Instructor ID " + instructor.getPersonID() + " exists.");
             }
         }
         instructorList.add(instructor);
     }
 
     @Override
-    public String getInstructorDetails(Instructor instructor) {
-        return "Instructor ID: " + instructor.getPersonID() + " | Name: " + instructor.getFullName();
+    public void updateInstructor(Instructor instructor) {
+        for (int i = 0; i < instructorList.size(); i++) {
+            if (instructorList.get(i).getPersonID() == instructor.getPersonID()) {
+                instructorList.set(i, instructor);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void removeInstructor(int instructorID) {
+        instructorList.removeIf(i -> i.getPersonID() == instructorID);
+    }
+
+    @Override
+    public Instructor getInstructorById(int id) {
+        return instructorList.stream()
+                .filter(i -> i.getPersonID() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

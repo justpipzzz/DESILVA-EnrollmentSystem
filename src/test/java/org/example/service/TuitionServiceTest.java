@@ -1,45 +1,66 @@
 package org.example.service;
 
+import org.example.model.Course;
 import org.example.model.Student;
 import org.example.model.TuitionFeePayment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TuitionServiceTest {
+    private TuitionService service;
 
-    private TuitionService tuitionService;
-    private TuitionFeePayment payment;
-
-    // @BeforeEach runs before EVERY test to give us a fresh, clean setup
     @BeforeEach
     void setUp() {
-        tuitionService = new TuitionService();
-        Student student = new Student(1, "Test Student", "BSIT");
-        payment = new TuitionFeePayment(student);
+        service = new TuitionService();
     }
 
     @Test
-    void testCalculateFee() {
-        // Arrange & Act: Calculate fee for 10 units (10 * 1500 = 15000)
-        double calculatedFee = tuitionService.calculateFee(payment, 10);
+    void testGetOrCreateAccount() {
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        
+        // 1. Creates new account
+        TuitionFeePayment newAccount = service.getOrCreateAccount(s1);
+        assertNotNull(newAccount);
+        assertEquals(1001, newAccount.getStudent().getPersonID());
+        
+        // 2. Fetches existing account
+        TuitionFeePayment fetchedAccount = service.getOrCreateAccount(s1);
+        assertEquals(newAccount, fetchedAccount, "Should return the same instance");
+    }
 
-        // Assert: Prove the math is correct
-        assertEquals(15000.0, calculatedFee, "Calculation should be exactly 15000.0");
-        assertEquals(15000.0, payment.getTotalTuitionFee(), "Payment object total fee should be updated");
+    @Test
+    void testCalculateFee_WithCourses() {
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        Course c1 = new Course(1, "Math", 3);
+        Course c2 = new Course(2, "Programming", 4);
+        
+        // Simulate enrollment
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(c1);
+        courses.add(c2);
+        s1.addAllCourses(courses);
+
+        TuitionFeePayment account = service.getOrCreateAccount(s1);
+        
+        // Total units = 7. RATE_PER_UNIT = 1500. Total = 10500.
+        double fee = service.calculateFee(account);
+        assertEquals(10500.0, fee);
+        assertEquals(10500.0, account.getTotalTuitionFee());
     }
 
     @Test
     void testMakePaymentAndGetBalance() {
-        // Arrange: Assess 10 units first
-        tuitionService.calculateFee(payment, 10); // Total is 15000
-
-        // Act: Make a payment of 5000
-        tuitionService.makePayment(payment, 5000);
-
-        // Assert: Prove the payment and balance are recorded correctly
-        assertEquals(5000.0, payment.getAmountPaid(), "Amount paid should be 5000");
-        assertEquals(10000.0, tuitionService.getRemainingBalance(payment), "Remaining balance should be 10000");
+        Student s1 = new Student(1001, "Doe", "John", "M", "CITE", "BSIT", "1", "IT1A");
+        TuitionFeePayment account = service.getOrCreateAccount(s1);
+        account.setTotalTuitionFee(5000.0); // Manually set for test
+        
+        service.makePayment(account, 2000.0);
+        
+        assertEquals(2000.0, account.getAmountPaid());
+        assertEquals(3000.0, service.getRemainingBalance(account));
     }
 }

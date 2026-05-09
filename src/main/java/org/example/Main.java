@@ -79,11 +79,40 @@ public class Main {
                                         System.out.print("New Program: "); String prog = input.nextLine();
                                         System.out.print("New Year Level: "); String year = input.nextLine();
                                         System.out.print("New Section: "); String sec = input.nextLine();
-                                        System.out.println(campusRegistrar.updateStudent(new Student(studUPD, lName, fName, mName, dept, prog, year, sec)));
+
+                                        // Call the method, then print success
+                                        campusRegistrar.updateStudent(new Student(studUPD, lName, fName, mName, dept, prog, year, sec));
+                                        System.out.println("Student updated successfully.");
                                         break;
+
                                     case 3:
                                         System.out.print("Student ID to delete: "); int studDLT = input.nextInt(); input.nextLine();
-                                        System.out.println(campusRegistrar.deleteStudent(new Student(studDLT, "", "", "", "", "", "", "")));
+
+                                        // 1. Search for the student first
+                                        Student studentToDelete = null;
+                                        for (Student s : campusRegistrar.getAllStudents()) {
+                                            if (s.getPersonID() == studDLT) {
+                                                studentToDelete = s;
+                                                break;
+                                            }
+                                        }
+
+                                        if (studentToDelete != null) {
+                                            // 2. Remove the student from their Section's list first!
+                                            for (Section sect : campusRegistrar.getAllSections()) {
+                                                if (sect.getSectionName().equalsIgnoreCase(studentToDelete.getSectionName())) {
+
+                                                    sect.getEnrolledStudents().removeIf(s -> s.getPersonID() == studDLT);
+                                                    break;
+                                                }
+                                            }
+
+                                            // 3. Now safely delete them from the registry
+                                            campusRegistrar.deleteStudent(studentToDelete);
+                                            System.out.println("Student removed successfully. Section capacity updated.");
+                                        } else {
+                                            System.out.println("Error: Student ID not found.");
+                                        }
                                         break;
                                     case 4: studentMenu = false; break;
                                     default: System.out.println("Invalid selection.");
@@ -106,7 +135,12 @@ public class Main {
                                         System.out.print("Course ID: "); int courseID = input.nextInt(); input.nextLine();
                                         System.out.print("Course Name: "); String courseName = input.nextLine();
                                         System.out.print("Units: "); int units = input.nextInt(); input.nextLine();
-                                        System.out.println(campusRegistrar.saveCourse(new Course(courseID, courseName, units)));
+                                        try {
+                                            campusRegistrar.saveCourse(new Course(courseID, courseName, units));
+                                            System.out.println("Course added successfully.");
+                                        } catch (Exception e) {
+                                            System.out.println(e.getMessage());
+                                        }
                                         break;
                                     case 2:
                                         List<Course> courses = campusRegistrar.getAllCourses();
@@ -114,8 +148,40 @@ public class Main {
                                         else for (Course c : courses) System.out.println("ID: " + c.getCourseID() + " | " + c.getCourseName() + " (" + c.getUnits() + " units)");
                                         break;
                                     case 3:
+                                        System.out.print("Enter Course ID to update: ");
+                                        int updID = input.nextInt(); input.nextLine();
+                                        Course courseToUpdate = null;
+
+                                        for (Course c : campusRegistrar.getAllCourses()) {
+                                            if (c.getCourseID() == updID) { courseToUpdate = c; break; }
+                                        }
+
+                                        if (courseToUpdate != null) {
+                                            System.out.print("New Course Name: ");
+                                            courseToUpdate.setCourseName(input.nextLine());
+                                            System.out.print("New Units: ");
+                                            courseToUpdate.setUnits(input.nextInt()); input.nextLine();
+
+                                            campusRegistrar.updateCourse(courseToUpdate);
+                                            System.out.println("Course updated successfully.");
+                                        } else {
+                                            System.out.println("Error: Course not found.");
+                                        }
+                                        break;
                                     case 4:
-                                        System.out.println("Feature locked for brevity."); break;
+                                        System.out.print("Enter Course ID to remove: ");
+                                        int delID = input.nextInt(); input.nextLine();
+
+                                        Course courseToDelete = campusRegistrar.findCourseById(delID);
+
+                                        if (courseToDelete != null) {
+
+                                            campusRegistrar.deleteCourse(courseToDelete);
+                                            System.out.println("Course removed successfully.");
+                                        } else {
+                                            System.out.println("Error: Course ID " + delID + " does not exist!");
+                                        }
+                                        break;
                                     case 5: courseMenu = false; break;
                                     default: System.out.println("Invalid selection.");
                                 }
@@ -128,7 +194,7 @@ public class Main {
                         while (instructorMenu) {
                             try {
                                 System.out.println("\n--- INSTRUCTOR MANAGEMENT ---");
-                                System.out.println("[1] Register Instructor\n[2] View All Instructors\n[3] Return");
+                                System.out.println("[1] Register Instructor\n[2] View All Instructors\n[3] Update Instructor\n[4] Remove Instructor\n[5] Return");
                                 System.out.print("Select an option: ");
                                 int choice = input.nextInt(); input.nextLine();
 
@@ -138,15 +204,59 @@ public class Main {
                                         System.out.print("Last Name: "); String lName = input.nextLine();
                                         System.out.print("First Name: "); String fName = input.nextLine();
                                         System.out.print("Middle Name: "); String mName = input.nextLine();
-                                        System.out.print("Assigned Department: "); String dept = input.nextLine();
-                                        System.out.println(campusRegistrar.saveInstructor(new Instructor(instID, lName, fName, mName, dept)));
+
+                                        try {
+                                            // Passing an empty string for the removed department parameter
+                                            campusRegistrar.saveInstructor(new Instructor(instID, lName, fName, mName, ""));
+                                            System.out.println("Instructor added successfully.");
+                                        } catch (Exception e) {
+                                            System.out.println(e.getMessage());
+                                        }
                                         break;
                                     case 2:
                                         List<Instructor> instructors = campusRegistrar.getAllInstructors();
                                         if (instructors.isEmpty()) System.out.println("No records found.");
-                                        else for (Instructor inst : instructors) System.out.println("ID: " + inst.getPersonID() + " | Name: " + inst.getFullName() + " | Dept: " + inst.getAssignedDepartment());
+                                        else for (Instructor inst : instructors) System.out.println("ID: " + inst.getPersonID() + " | Name: " + inst.getFullName());
                                         break;
-                                    case 3: instructorMenu = false; break;
+                                    case 3:
+                                        System.out.print("Enter Instructor ID to update: ");
+                                        int updID = input.nextInt(); input.nextLine();
+                                        Instructor instToUpdate = null;
+
+                                        for (Instructor i : campusRegistrar.getAllInstructors()) {
+                                            if (i.getPersonID() == updID) { instToUpdate = i; break; }
+                                        }
+
+                                        if (instToUpdate != null) {
+                                            System.out.print("New Last Name: "); String newLName = input.nextLine();
+                                            System.out.print("New First Name: "); String newFName = input.nextLine();
+                                            System.out.print("New Middle Name: "); String newMName = input.nextLine();
+
+                                            Instructor updatedInst = new Instructor(updID, newLName, newFName, newMName, "");
+                                            campusRegistrar.updateInstructor(updatedInst);
+                                            System.out.println("Instructor updated successfully.");
+                                        } else {
+                                            System.out.println("Error: Instructor not found.");
+                                        }
+                                        break;
+                                    case 4:
+                                        System.out.print("Enter Instructor ID to remove: ");
+                                        int delID = input.nextInt(); input.nextLine();
+                                        boolean found = false;
+
+                                        for (Instructor i : campusRegistrar.getAllInstructors()) {
+                                            if (i.getPersonID() == delID) { found = true; break; }
+                                        }
+
+                                        if (found) {
+                                            campusRegistrar.deleteInstructor(delID);
+                                            System.out.println("Instructor removed successfully.");
+                                        } else {
+                                            System.out.println("Error: Instructor not found.");
+                                        }
+                                        break;
+                                    case 5: instructorMenu = false; break;
+                                    default: System.out.println("Invalid selection.");
                                 }
                             } catch (Exception e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
                         }
@@ -342,6 +452,8 @@ public class Main {
                                     System.out.print("Enter Last Name: "); String lName = input.nextLine();
                                     System.out.print("Enter First Name: "); String fName = input.nextLine();
                                     System.out.print("Enter Middle Name: "); String mName = input.nextLine();
+
+
                                     System.out.print("Enter Year Level: "); String yearLvl = input.nextLine();
 
                                     System.out.println("\n[ Available Block Sections ]");
@@ -370,12 +482,18 @@ public class Main {
                                     }
 
                                     int newStudId = nextStudentId++;
+
                                     Student newStudent = new Student(newStudId, lName, fName, mName, autoDept, autoProg, yearLvl, targetSection.getSectionName());
                                     newStudent.addAllCourses(new ArrayList<>(targetSection.getCourseInstructors().keySet()));
 
                                     try {
-                                        System.out.println(campusRegistrar.saveStudent(newStudent));
+                                        // FIX 1: Removed System.out.println from saveStudent since it is void!
+                                        campusRegistrar.saveStudent(newStudent);
+                                        System.out.println("Student saved successfully.");
+
+                                        // enrollStudent returns a String, so this is safe to print
                                         System.out.println(campusRegistrar.enrollStudent(newStudent, targetSection));
+
                                         System.out.println("\nEnrollment Summary:");
                                         System.out.println("Student: " + newStudent.getFullName() + " (Assigned ID: " + newStudent.getPersonID() + ")");
                                         System.out.println("Assigned to: " + autoDept + " -> " + autoProg + " -> " + targetSection.getSectionName());
@@ -389,9 +507,14 @@ public class Main {
                                                 System.out.println("- " + c.getCourseName() + " (" + c.getUnits() + " units)");
                                             }
                                         }
-                                    } catch (Exception e) { System.out.println("Enrollment Failed: " + e.getMessage()); }
+                                    } catch (Exception e) {
+                                        System.out.println("Enrollment Failed: " + e.getMessage());
+                                    }
                                 } else if (choice == 2) enrollMenu = false;
-                            } catch (Exception e) { System.out.println("Invalid input. Try again."); input.nextLine(); }
+                            } catch (Exception e) {
+                                System.out.println("Invalid input. Try again.");
+                                input.nextLine();
+                            }
                         }
                         break;
 

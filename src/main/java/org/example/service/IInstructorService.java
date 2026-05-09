@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface IInstructorService {
     void addInstructor(Instructor instructor) throws DuplicateIDException;
-    String getInstructorDetails(Instructor instructor);
+    void updateInstructor(Instructor instructor); // Added for CRUD
+    void removeInstructor(int instructorID);     // Added for CRUD
+    Instructor getInstructorById(int id);         // Added for CRUD
     List<Instructor> getAllInstructors();
 }

@@ -12,49 +12,50 @@ public class CampusRegistrar {
     private final IEnrollmentService enrollmentService;
     private final ITuitionService tuitionService;
     private final ISectionService sectionService;
-    private final IDepartmentService departmentService; // NEW
+    private final IDepartmentService departmentService;
 
     public CampusRegistrar(IStudentService studentService, ICourseService courseService,
                            IInstructorService instructorService, IEnrollmentService enrollmentService,
                            ITuitionService tuitionService, ISectionService sectionService,
-                           IDepartmentService departmentService) { // UPDATED
+                           IDepartmentService departmentService) {
         this.studentService = studentService;
         this.courseService = courseService;
         this.instructorService = instructorService;
         this.enrollmentService = enrollmentService;
         this.tuitionService = tuitionService;
         this.sectionService = sectionService;
-        this.departmentService = departmentService; // NEW
+        this.departmentService = departmentService;
     }
 
-    // --- DEPARTMENT METHODS (NEW) ---
+    // --- STUDENT METHODS ---
+    public List<Student> getAllStudents() { return studentService.getAllStudents(); }
+    public void saveStudent(Student student) throws DuplicateIDException { studentService.addStudent(student); }
+    public void updateStudent(Student student) { studentService.updateStudent(student); }
+    public void deleteStudent(Student student) { studentService.removeStudent(student); }
+
+    // --- COURSE METHODS (CRUD) ---
+    public List<Course> getAllCourses() { return courseService.getAllCourses(); }
+    public void saveCourse(Course course) throws DuplicateIDException { courseService.addCourse(course); }
+    public void updateCourse(Course course) { courseService.updateCourse(course); }
+    public void deleteCourse(Course course) { courseService.removeCourse(course); }
+    public Course findCourseById(int id) {
+        return courseService.getAllCourses().stream()
+                .filter(c -> c.getCourseID() == id)
+                .findFirst()
+                .orElse(null);
+    }
+    // --- INSTRUCTOR METHODS (CRUD) ---
+    public List<Instructor> getAllInstructors() { return instructorService.getAllInstructors(); }
+    public void saveInstructor(Instructor instructor) throws DuplicateIDException { instructorService.addInstructor(instructor); }
+    public void updateInstructor(Instructor instructor) { instructorService.updateInstructor(instructor); }
+    public void deleteInstructor(int id) { instructorService.removeInstructor(id); }
+    public Instructor findInstructorById(int id) { return instructorService.getInstructorById(id); }
+
+    // --- DEPARTMENT METHODS ---
     public List<Department> getAllDepartments() { return departmentService.getAllDepartments(); }
     public String saveDepartment(Department department) {
         departmentService.addDepartment(department);
-        return "Success: Department " + department.getDepartmentName() + " created!";
-    }
-
-    // --- STUDENT, COURSE, INSTRUCTOR METHODS ---
-    public List<Student> getAllStudents() { return studentService.getAllStudents(); }
-    public String saveStudent(Student student) {
-        try { studentService.addStudent(student); return "Success: Student saved!"; }
-        catch (DuplicateIDException e) { return e.getMessage(); }
-    }
-    public String updateStudent(Student student) { studentService.updateStudent(student); return "Success: Student updated!"; }
-    public String deleteStudent(Student student) { studentService.removeStudent(student); return "Success: Student removed!"; }
-
-    public List<Course> getAllCourses() { return courseService.getAllCourses(); }
-    public String saveCourse(Course course) {
-        try { courseService.addCourse(course); return "Success: Course saved!"; }
-        catch (DuplicateIDException e) { return e.getMessage(); }
-    }
-    public String updateCourse(Course course) { courseService.updateCourse(course); return "Success: Course updated!"; }
-    public String deleteCourse(Course course) { courseService.removeCourse(course); return "Success: Course removed!"; }
-
-    public List<Instructor> getAllInstructors() { return instructorService.getAllInstructors(); }
-    public String saveInstructor(Instructor instructor) {
-        try { instructorService.addInstructor(instructor); return "Success: Instructor saved!"; }
-        catch (DuplicateIDException e) { return e.getMessage(); }
+        return "Department saved successfully.";
     }
 
     // --- SECTION METHODS ---
